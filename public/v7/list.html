@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimMe V7 - Hentai List</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/mobile.css">
+    <style>
+        .server-v7 {
+            --primary-color: #e74c3c;
+            --secondary-color: #c0392b;
+            --accent-color: #f39c12;
+        }
+
+        .server-v7 .sidebar {
+            background: linear-gradient(180deg, #1a0a0f 0%, #2d1520 100%);
+        }
+
+        .server-v7 .nav-link.active,
+        .server-v7 .nav-link:hover {
+            background: rgba(231, 76, 60, 0.15);
+            border-left-color: var(--primary-color);
+        }
+
+        .server-v7 .topbar {
+            background: linear-gradient(135deg, #1a0a0f 0%, #2d1520 100%);
+            border-bottom: 1px solid rgba(231, 76, 60, 0.3);
+        }
+
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .list-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .list-stats {
+            font-size: 0.9rem;
+            color: rgba(255, 232, 232, 0.7);
+        }
+
+        .letter-navigation {
+            position: sticky;
+            top: 90px;
+            z-index: 30;
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+            background: rgba(20, 8, 12, 0.96);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 12px;
+            padding: 10px 12px;
+            margin-bottom: 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+
+        .letter-btn {
+            flex: 0 0 auto;
+            min-width: 42px;
+            background: rgba(231, 76, 60, 0.18);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #ffe8e8;
+            padding: 7px 11px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            line-height: 1;
+        }
+
+        .letter-btn .letter-count {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            font-weight: 600;
+        }
+
+        .letter-btn:hover {
+            background: rgba(231, 76, 60, 0.38);
+            border-color: rgba(231, 76, 60, 0.65);
+        }
+
+        .letter-btn:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        .letter-btn.active {
+            background: var(--primary-color);
+            color: #1a0a0f;
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.35);
+        }
+
+        .letter-btn.all-btn {
+            background: rgba(243, 156, 18, 0.18);
+            border-color: rgba(243, 156, 18, 0.5);
+            color: #ffd08a;
+            order: -1;
+            margin-right: 6px;
+        }
+
+        .letter-btn.all-btn:hover {
+            background: rgba(243, 156, 18, 0.32);
+            border-color: rgba(243, 156, 18, 0.7);
+        }
+
+        .letter-btn.all-btn.active {
+            background: var(--accent-color);
+            color: #1a0a0f;
+            border-color: var(--accent-color);
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .anime-item {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.08), rgba(26, 10, 15, 0.92));
+            border: 1px solid rgba(231, 76, 60, 0.22);
+            border-left: 3px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 12px 14px;
+            transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 68px;
+        }
+
+        .anime-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(231, 76, 60, 0.6);
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.16), rgba(45, 21, 32, 0.95));
+            box-shadow: 0 10px 24px rgba(45, 21, 32, 0.55);
+        }
+
+        .anime-item:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: 2px;
+        }
+
+        .anime-initial {
+            flex: 0 0 38px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: grid;
+            place-items: center;
+            background: rgba(231, 76, 60, 0.16);
+            border: 1px solid rgba(231, 76, 60, 0.35);
+            color: var(--primary-color);
+            font-weight: 900;
+            font-size: 1.05rem;
+        }
+
+        .anime-card-body {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .anime-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #ffe8e8;
+            margin: 0 0 6px;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .anime-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            font-size: 0.75rem;
+        }
+
+        .anime-chip {
+            background: rgba(231, 76, 60, 0.14);
+            border: 1px solid rgba(231, 76, 60, 0.28);
+            color: rgba(255, 232, 232, 0.78);
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        .anime-chip-type {
+            background: rgba(243, 156, 18, 0.14);
+            border-color: rgba(243, 156, 18, 0.32);
+            color: #ffd08a;
+        }
+
+        .anime-action {
+            color: rgba(243, 156, 18, 0.92);
+            font-weight: 700;
+        }
+
+        .anime-letter {
+            display: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem 0;
+            color: rgba(255, 232, 232, 0.6);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(231, 76, 60, 0.25);
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(192, 57, 43, 0.95);
+            color: #fff;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .letter-section {
+            margin-bottom: 12px;
+            border: 1px solid rgba(231, 76, 60, 0.22);
+            border-radius: 12px;
+            background: rgba(26, 10, 15, 0.55);
+            overflow: hidden;
+            scroll-margin-top: 175px;
+        }
+
+        .letter-section.collapsed .anime-grid,
+        .letter-section.collapsed .letter-section-panel { display: none; }
+
+        .letter-section-title {
+            width: 100%;
+            margin: 0;
+            padding: 13px 16px;
+            background: rgba(231, 76, 60, 0.08);
+            border: 0;
+            border-bottom: 1px solid rgba(231, 76, 60, 0.18);
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+            transition: background 0.15s ease;
+        }
+
+        .letter-section-title:hover { background: rgba(231, 76, 60, 0.15); }
+        .letter-section-title:focus-visible {
+            outline: 2px solid var(--accent-color);
+            outline-offset: -2px;
+        }
+
+        .letter-toggle-mark {
+            width: 1em;
+            color: var(--accent-color);
+            font-size: 0.9em;
+            transition: transform 0.15s ease;
+        }
+
+        .letter-section.collapsed .letter-toggle-mark { transform: rotate(-90deg); }
+
+        .letter-toggle-label { font-size: 1.15rem; }
+
+        .letter-toggle-count {
+            margin-left: auto;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255, 232, 232, 0.72);
+            background: rgba(231, 76, 60, 0.15);
+            padding: 3px 10px;
+            border-radius: 999px;
+        }
+
+        .letter-section-panel { padding: 14px; }
+
+        .list-toolbar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .ctrl-btn {
+            background: transparent;
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: #ffe8e8;
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s ease, border-color 0.15s ease;
+        }
+
+        .ctrl-btn:hover { background: rgba(231, 76, 60, 0.18); border-color: rgba(231, 76, 60, 0.65); }
+        .ctrl-btn:focus-visible { outline: 2px solid var(--accent-color); outline-offset: 2px; }
+
+        .list-stats {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.22);
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            color: #ffe8e8;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 6px 10px 0 !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+
+            .list-header {
+                flex-direction: column;
+                gap: 8px;
+                align-items: flex-start;
+            }
+
+            .list-title { font-size: 1.25rem; }
+
+            .letter-navigation {
+                top: 82px !important;
+                margin-left: -10px !important;
+                margin-right: -10px !important;
+                border-radius: 0 !important;
+                border-left: 0;
+                border-right: 0;
+                padding: 8px 10px !important;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                overflow-x: auto;
+                overflow-y: hidden;
+                scrollbar-width: thin;
+                scrollbar-color: rgba(231, 76, 60, 0.5) transparent;
+                gap: 5px;
+            }
+
+            .letter-navigation::-webkit-scrollbar { height: 5px; }
+            .letter-navigation::-webkit-scrollbar-thumb {
+                background: rgba(231, 76, 60, 0.5);
+                border-radius: 3px;
+            }
+
+            .letter-btn {
+                min-width: 34px;
+                padding: 5px 8px;
+                font-size: 0.76rem;
+            }
+
+            .letter-btn .letter-count { display: none; }
+            .letter-section { scroll-margin-top: 165px !important; }
+            .letter-section-panel { padding: 10px 6px !important; }
+            .letter-toggle-label { font-size: 1.05rem; }
+            .letter-toggle-count { font-size: 0.72rem; padding: 2px 8px; }
+
+            .server-v7 .anime-grid {
+                grid-template-columns: 1fr !important;
+                gap: 8px !important;
+            }
+
+            .server-v7 .anime-item {
+                min-height: 56px !important;
+                padding: 8px 10px !important;
+                gap: 8px !important;
+            }
+
+            .server-v7 .anime-initial {
+                flex-basis: 30px !important;
+                width: 30px !important;
+                height: 30px !important;
+                font-size: 0.9rem !important;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .letter-section-title,
+            .letter-toggle-mark,
+            .anime-item,
+            .letter-btn,
+            .ctrl-btn {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+<body class="server-v7 home-with-sidebar">
+    <div class="home-layout">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1 class="logo" onclick="window.location.href='/v7/home'">AnimMe V7</h1>
+                <button class="sidebar-close" id="menuCloseBtn" aria-label="Tutup menu">×</button>
+            </div>
+            <div class="sidebar-server">
+                <span class="server-label">Pilih Server</span>
+                <div class="server-select-wrapper">
+                    <select id="serverSelect" class="server-select">
+                        <option value="v1">V1 - Otakudesu</option>
+                        <option value="v2">V2 - Samehadaku</option>
+                        <option value="v3">V3 - Kuramanime</option>
+                        <option value="v4">V4 - Anichin</option>
+                        <option value="v5">V5 - Anoboy</option>
+                        <option value="v6">V6 - AnimeIndo</option>
+                        <option value="v7" selected>V7 - Nekopoi</option>
+                        <option value="v8">V8 - Kusonime</option>
+                        <option value="v9">V9 - Auratail</option>
+                        <option value="v10">V10 - Vidku</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="sidebar-menu">
+                <a href="/v7/home" class="nav-link">🏠 Beranda</a>
+                <a href="/v7/category?slug=hentai" class="nav-link">🔥 Hentai</a>
+                <a href="/v7/category?slug=2d-animation" class="nav-link">🎞️ 2D Animation</a>
+                <a href="/v7/category?slug=3d-hentai" class="nav-link">🧊 3D Hentai</a>
+                <a href="/v7/category?slug=jav" class="nav-link">🎥 JAV</a>
+                <a href="/v7/category?slug=jav-cosplay" class="nav-link">👘 JAV Cosplay</a>
+                <a href="/v7/search" class="nav-link">🔎 Search</a>
+                <a href="/v7/list" class="nav-link active">📚 Hentai List</a>
+                <a href="/v7/jav-list" class="nav-link">🎬 JAV List</a>
+                <a href="/v7/genre-list" class="nav-link">🏷️ Genre List</a>
+                <a href="/v7/schedule" class="nav-link">📅 Jadwal</a>
+                <a href="/v7/random" class="nav-link">🎲 Random</a>
+            </nav>
+        </aside>
+
+        <div class="content-area">
+            <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+            <header class="topbar">
+                <button class="menu-toggle" id="menuToggle" aria-label="Buka menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="topbar-title" onclick="window.location.href='/v7/home'">AnimMe V7 - Hentai List</div>
+                <div class="search-container">
+                    <button class="search-icon-mobile" id="searchIconBtn" aria-label="Search">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                    <input type="text" id="searchInput" placeholder="Cari di Nekopoi..." class="search-input">
+                    <button id="searchBtn" class="search-btn">Cari</button>
+                    <button class="search-close-btn" id="searchCloseBtn" aria-label="Close">×</button>
+                </div>
+            </header>
+
+            <main class="main-content">
+                <div id="errorContainer" style="display: none;"></div>
+
+                <div class="list-header">
+                    <h1 class="list-title">📚 Hentai List A-Z</h1>
+                    <div class="list-toolbar" role="group" aria-label="Kontrol tampilan">
+                        <button class="ctrl-btn" id="expandAllBtn" type="button">▾ Expand</button>
+                        <button class="ctrl-btn" id="collapseAllBtn" type="button">▸ Collapse</button>
+                        <span class="list-stats" id="listStats">Memuat...</span>
+                    </div>
+                </div>
+
+                <div class="letter-navigation" id="letterNavigation">
+                    <button class="letter-btn all-btn" data-letter="">Semua</button>
+                </div>
+
+                <div id="listContent">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        <p>Memuat daftar anime...</p>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>AnimMe V7 - Powered by Nekopoi</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="/v7/list.js"></script>
+    <script src="/shared/server-select.js"></script>
+</body>
+</html>

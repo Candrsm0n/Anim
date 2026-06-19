@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Episode Anime - AnimMe V4</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/mobile.css">
+    <style>
+        /* V4 episode — visual polish aligned with refreshed Anichin pages */
+        .v4-episode-page {
+            --v4-bg: #0f1019;
+            --v4-panel: #1a1a2e;
+            --v4-card: #16213e;
+            --v4-border: rgba(255, 107, 107, 0.12);
+            --v4-border-strong: rgba(255, 107, 107, 0.28);
+            --v4-muted: rgba(255, 255, 255, 0.62);
+            --v4-primary: #ff6b6b;
+            --v4-primary-soft: rgba(255, 107, 107, 0.14);
+            --v4-accent: #ffd700;
+            --v4-shadow: 0 14px 40px rgba(8, 10, 24, 0.45);
+            --v4-radius: 14px;
+        }
+
+        .v4-episode-page.server-v4 {
+            --primary-color: #ff6b6b;
+            --secondary-color: #ee5a6f;
+            --accent-color: #ffd700;
+        }
+
+        .v4-episode-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 6% 0%, rgba(255, 107, 107, 0.14) 0%, transparent 40%),
+                radial-gradient(circle at 94% 6%, rgba(238, 90, 111, 0.08) 0%, transparent 36%),
+                var(--v4-bg);
+            color: #fff;
+        }
+
+        .v4-episode-page .navbar {
+            background: linear-gradient(180deg, rgba(15, 16, 25, 0.96) 0%, rgba(15, 16, 25, 0.86) 100%);
+            border-bottom: 1px solid var(--v4-border);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.28);
+            backdrop-filter: blur(12px);
+        }
+
+        .v4-episode-page .logo {
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #fff 0%, rgba(255, 107, 107, 0.85) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .v4-episode-page .nav-link:hover,
+        .v4-episode-page .nav-link.active {
+            color: #fff;
+            background: var(--v4-primary-soft);
+        }
+
+        .v4-episode-page .server-select {
+            background: rgba(12, 14, 28, 0.9);
+            border: 1px solid var(--v4-border);
+            border-radius: 999px;
+        }
+
+        .v4-episode-page .server-select:hover,
+        .v4-episode-page .server-select:focus {
+            border-color: rgba(255, 107, 107, 0.55);
+            box-shadow: 0 0 0 3px var(--v4-primary-soft);
+        }
+
+        .episode-container {
+            max-width: 1320px;
+            margin: 100px auto 0;
+            padding: 0 4% 80px;
+        }
+
+        /* Video Player Section */
+        .video-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: var(--v4-radius);
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--v4-shadow);
+            border: 1px solid var(--v4-border-strong);
+        }
+
+        .video-header {
+            padding: 1.35rem 1.5rem;
+            border-bottom: 1px solid var(--v4-border);
+            background: linear-gradient(180deg, rgba(255, 107, 107, 0.08), transparent);
+        }
+
+        .video-title {
+            font-size: clamp(1.35rem, 2.6vw, 1.85rem);
+            color: #fff;
+            margin: 0 0 0.5rem;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            font-weight: 600;
+        }
+
+        .video-subtitle {
+            color: var(--accent-color);
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .video-player {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 */
+            height: 0;
+            background: #000;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .video-player .loading {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 1.5rem;
+            color: var(--v4-muted);
+            background: rgba(0, 0, 0, 0.72);
+        }
+
+        .video-player iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Server Selection */
+        .server-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: var(--v4-radius);
+            padding: 1.35rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--v4-shadow);
+            border: 1px solid var(--v4-border);
+        }
+
+        .server-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .server-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .server-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            color: #fff;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .server-btn:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .server-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Episode Navigation */
+        .episode-nav {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: var(--v4-radius);
+            padding: 1.35rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--v4-shadow);
+            border: 1px solid var(--v4-border);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 1rem;
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            color: #fff;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        /* Episode List */
+        .episode-list-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .episode-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.8rem;
+            max-height: min(42vh, 320px);
+            overflow-y: auto;
+            padding: 2px 4px 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 107, 107, 0.45) rgba(255, 255, 255, 0.06);
+        }
+
+        .episode-grid::-webkit-scrollbar { width: 8px; }
+        .episode-grid::-webkit-scrollbar-thumb {
+            background: rgba(255, 107, 107, 0.4);
+            border-radius: 8px;
+        }
+
+        .episode-item {
+            padding: 1rem;
+            background: rgba(255, 107, 107, 0.1);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+            font-weight: 600;
+            text-decoration: none;
+            display: block;
+        }
+
+        .episode-item:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .episode-item.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+        }
+
+        /* Download Section */
+        .download-section {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: var(--v4-radius);
+            padding: 1.35rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--v4-shadow);
+            border: 1px solid var(--v4-border);
+        }
+
+        .download-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .quality-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .quality-group h4 {
+            color: var(--accent-color);
+            margin-bottom: 0.8rem;
+            font-size: 1.1rem;
+        }
+
+        .download-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .download-btn {
+            padding: 0.8rem 1.5rem;
+            background: rgba(12, 14, 28, 0.65);
+            color: #fff;
+            border: 1px solid var(--v4-border-strong);
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .download-btn:hover {
+            background: var(--v4-primary-soft);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(255, 107, 107, 0.25);
+        }
+
+        /* Loading State */
+        .episode-container > .loading {
+            text-align: center;
+            padding: 4rem 1.5rem;
+            color: var(--v4-muted);
+            border: 1px dashed var(--v4-border-strong);
+            border-radius: var(--v4-radius);
+            background: rgba(26, 26, 46, 0.35);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            border: 4px solid #333;
+            border-top-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: linear-gradient(160deg, rgba(80, 22, 32, 0.95), rgba(30, 18, 32, 0.95));
+            color: white;
+            padding: 1.5rem;
+            border-radius: var(--v4-radius);
+            border: 1px solid rgba(255, 107, 107, 0.35);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+
+
+        .server-section h3,
+        .episode-list-section h3,
+        .download-section h3 {
+            color: #fff;
+            letter-spacing: -0.01em;
+        }
+
+        .video-subtitle,
+        .quality-group h4 {
+            color: var(--v4-accent);
+        }
+
+        .server-btn,
+        .nav-btn,
+        .episode-item {
+            min-height: 44px;
+        }
+
+        .server-btn:focus-visible,
+        .nav-btn:focus-visible,
+        .episode-item:focus-visible,
+        .download-btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.28);
+        }
+
+        .nav-btn.active,
+        .server-btn.active,
+        .episode-item.active {
+            background: linear-gradient(135deg, var(--v4-primary) 0%, var(--secondary-color) 100%);
+        }
+
+        .episode-grid {
+            align-items: stretch;
+        }
+
+        .download-btn {
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .loading-spinner { animation: none; border-top-color: var(--v4-muted); }
+            .server-btn:hover, .nav-btn:hover:not(:disabled),
+            .episode-item:hover, .download-btn:hover { transform: none; }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .episode-container {
+                margin-top: 78px;
+                padding: 0 15px 32px;
+            }
+
+            .video-header,
+            .server-section,
+            .episode-nav,
+            .download-section {
+                padding: 1rem;
+            }
+
+            .video-title {
+                font-size: 1.3rem;
+            }
+
+            .video-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .episode-grid {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 0.6rem;
+            }
+
+            .episode-item {
+                padding: 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+
+            .server-list {
+                gap: 0.6rem;
+            }
+
+            .server-btn,
+            .download-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .episode-container {
+                margin-top: 184px;
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            .video-section,
+            .server-section,
+            .episode-nav,
+            .download-section,
+            .error {
+                border-radius: 12px;
+            }
+
+            .episode-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 0.5rem;
+            }
+
+            .episode-item {
+                padding: 0.7rem 0.5rem;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body class="server-v4 v4-episode-page">
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="logo" onclick="window.location.href='/v4/home'">AnimMe V4</h1>
+            <div class="server-selector">
+                <select id="serverSelect" class="server-select">
+                    <option value="v1">V1 - Otakudesu</option>
+                    <option value="v2">V2 - Samehadaku</option>
+                    <option value="v3">V3 - Kuramanime</option>
+                    <option value="v4" selected>V4 - Anichin</option>
+                    <option value="v5">V5 - Anoboy</option>
+                    <option value="v6">V6 - AnimeIndo</option>
+                    <option value="v7">V7 - Nekopoi</option>
+                    <option value="v8">V8 - Kusonime</option>
+                    <option value="v9">V9 - Auratail</option>
+                    <option value="v10">V10 - Vidku</option>
+                </select>
+            </div>
+            <div class="nav-menu">
+                <a href="/v4/home" class="nav-link">Beranda</a>
+                <a href="/v4/completed" class="nav-link">Completed</a>
+                <a href="/v4/search" class="nav-link">Cari Anime</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="episode-container" id="episodeContent">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Memuat episode...</p>
+        </div>
+    </main>
+
+    <script src="/v4/episode.js?v=20251031"></script>
+    <script src="/shared/server-select.js"></script>
+</body>
+</html>

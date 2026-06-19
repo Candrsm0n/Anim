@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Sedang Tayang - Kuramanime V3</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-main: #141414;
+            --bg-panel: #1a1a1a;
+            --bg-card: #1f1f1f;
+            --border-soft: rgba(255, 255, 255, 0.08);
+            --border-strong: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-muted: #9ea0a8;
+            --accent: #e50914;
+            --accent-soft: rgba(229, 9, 20, 0.16);
+            --accent-strong: rgba(229, 9, 20, 0.45);
+            --shadow-soft: 0 12px 32px rgba(0, 0, 0, 0.45);
+            --shadow-accent: 0 12px 32px rgba(229, 9, 20, 0.35);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background:
+                radial-gradient(circle at 12% 20%, rgba(229, 9, 20, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 88% 12%, rgba(229, 9, 20, 0.12) 0%, transparent 50%),
+                var(--bg-main);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(14px);
+            border-radius: 16px;
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-soft);
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 4px;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a.active {
+            color: var(--accent);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent);
+            cursor: pointer;
+            text-shadow: 0 0 18px rgba(229, 9, 20, 0.35);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            background: var(--bg-panel);
+            backdrop-filter: blur(12px);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-soft);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+            text-shadow: 0 0 18px rgba(0, 0, 0, 0.45);
+        }
+
+        .header h1::after {
+            content: '';
+            display: block;
+            width: 56px;
+            height: 3px;
+            margin: 14px auto 0;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+        }
+
+        #headerStats {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-top: 12px;
+        }
+
+        #headerStats strong { color: var(--accent); font-weight: 600; }
+
+
+        .list-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+            padding: 14px 18px;
+            border: 1px solid var(--border-soft);
+            border-radius: 16px;
+            background: rgba(31, 31, 31, 0.7);
+            box-shadow: var(--shadow-soft);
+            flex-wrap: wrap;
+        }
+
+        .list-tools-label { color: var(--text-muted); font-size: 0.9rem; font-weight: 600; }
+
+        .sort-pills { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+        .sort-pill {
+            font: inherit;
+            color: var(--text-muted);
+            padding: 10px 16px;
+            border-radius: 999px;
+            border: 1px solid var(--border-soft);
+            background: rgba(255, 255, 255, 0.03);
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.25s ease, border-color 0.25s ease, background 0.25s ease;
+        }
+
+        .sort-pill:hover { color: var(--text-primary); border-color: var(--accent-strong); background: var(--accent-soft); }
+
+        .sort-pill.active {
+            color: var(--text-primary);
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: 0 0 0 1px rgba(229, 9, 20, 0.25);
+        }
+
+        .toolbar-search {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+            min-width: 200px;
+            max-width: 420px;
+            justify-content: flex-end;
+        }
+
+        .toolbar-search-input {
+            flex: 1;
+            min-width: 0;
+            padding: 10px 16px;
+            border: 1px solid var(--border-soft);
+            border-radius: 999px;
+            background: rgba(12, 12, 12, 0.85);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .toolbar-search-input:focus {
+            border-color: rgba(229, 9, 20, 0.55);
+            box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.14);
+        }
+
+        .search-cta {
+            color: #fff;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: var(--accent);
+            border: none;
+            cursor: pointer;
+            font: inherit;
+            white-space: nowrap;
+            transition: background 0.25s ease, transform 0.2s ease;
+        }
+
+        .search-cta:hover { background: #f6121d; transform: translateY(-1px); }
+
+        .sort-menu { display: none; }
+
+        .sort-menu-hidden {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .sort-button {
+            background: linear-gradient(180deg, var(--bg-card), #191919);
+            border: 1px solid var(--border-soft);
+            border-radius: 14px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .sort-button:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-accent);
+            border-color: var(--accent-strong);
+            background: var(--accent-soft);
+        }
+
+        .sort-button.active {
+            border-color: var(--accent);
+            background: var(--accent-soft);
+            box-shadow: var(--shadow-accent);
+        }
+
+        .sort-icon {
+            font-size: 2.5rem;
+            color: var(--accent);
+        }
+
+        .sort-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .sort-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        @keyframes v3-ongoing-shimmer {
+            from { background-position: 200% 0; }
+            to { background-position: -200% 0; }
+        }
+
+        .loading {
+            text-align: center;
+            padding: 48px 24px;
+            font-size: 1rem;
+            color: var(--accent);
+            position: relative;
+            overflow: hidden;
+            border: 1px dashed var(--border-strong);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .loading::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            background-size: 200% 100%;
+            animation: v3-ongoing-shimmer 1.6s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .loading-text { position: relative; z-index: 1; }
+
+        .loading.error-state {
+            color: #ff8a8a;
+            border-style: solid;
+            border-color: rgba(229, 9, 20, 0.28);
+            background: rgba(229, 9, 20, 0.08);
+        }
+
+        .loading.error-state::before { display: none; }
+
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 56px 24px;
+            color: var(--text-muted);
+            border-radius: 16px;
+            border: 1px solid var(--border-soft);
+            background: var(--bg-panel);
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .anime-card {
+            background: linear-gradient(180deg, var(--bg-card) 0%, #171717 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid var(--border-soft);
+            box-shadow: var(--shadow-soft);
+            position: relative;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-accent);
+            border-color: var(--accent-strong);
+        }
+
+        .anime-poster-wrap {
+            position: relative;
+            overflow: hidden;
+            background: #111;
+        }
+
+        .anime-poster-wrap::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, transparent 58%, rgba(0, 0, 0, 0.55) 100%);
+        }
+
+        .anime-poster {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            height: auto;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.35s ease;
+        }
+
+        .anime-card:hover .anime-poster {
+            transform: scale(1.03);
+        }
+
+        .anime-info {
+            padding: 15px;
+        }
+
+        .anime-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            line-height: 1.4;
+            min-height: 2.8em;
+        }
+
+        .anime-episode {
+            font-size: 0.85rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+
+        .anime-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .anime-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-strong);
+            border-radius: 6px;
+            color: var(--accent);
+        }
+
+        .trending-badge {
+            z-index: 2;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--accent);
+            color: var(--text-primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-accent);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .episode-badge {
+            z-index: 2;
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(5px);
+            color: #fff;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .pagination button {
+            padding: 12px 24px;
+            background: var(--accent-soft);
+            border: 1px solid var(--accent-strong);
+            border-radius: 10px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .pagination span {
+            padding: 12px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-soft);
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(229, 9, 20, 0.08);
+            border: 1px solid rgba(229, 9, 20, 0.28);
+            border-radius: 16px;
+            color: #ff8a8a;
+        }
+
+        /* Desktop: Maksimal 6 kolom */
+        @media (min-width: 1200px) {
+            .anime-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body.v3-ongoing-page { padding: 12px; }
+
+            .list-tools { flex-direction: column; align-items: stretch; }
+            .toolbar-search { max-width: none; width: 100%; justify-content: stretch; }
+            .sort-pills { justify-content: center; }
+
+            .navbar { padding: 14px 16px; border-radius: 14px; }
+
+            .navbar-content { justify-content: center; }
+
+            .nav-links { gap: 14px; }
+
+            .header { padding: 24px 18px; margin-bottom: 24px; }
+
+            .sort-menu {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 10px;
+            }
+
+            .sort-button {
+                padding: 15px;
+            }
+
+            .sort-icon {
+                font-size: 2rem;
+            }
+
+            .sort-name {
+                font-size: 1rem;
+            }
+
+            .anime-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body class="v3-ongoing-page">
+    <nav class="navbar" aria-label="Navigasi utama">
+        <div class="navbar-content">
+            <div class="logo" onclick="window.location.href='/v3/home'">🎌 AnimMe V3</div>
+            <div class="nav-links">
+                <a href="/v3/home">Beranda</a>
+                <a href="/v3/animelist">Daftar Anime</a>
+                <a href="/v3/ongoing" class="active" aria-current="page">Sedang Tayang</a>
+                <a href="/v3/finished">Selesai Tayang</a>
+                <a href="/v3/movie">Film</a>
+                <a href="/v3/upcoming">Segera Tayang</a>
+                <a href="/v3/donghua">Donghua</a>
+                <a href="/v3/search">Cari</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="header">
+            <h1>📺 Anime Sedang Tayang</h1>
+            <p>Daftar anime yang sedang ongoing dari Kuramanime</p>
+            <p id="headerStats" aria-live="polite"></p>
+        </header>
+
+        <div class="list-tools" aria-label="Urutan dan pencarian">
+            <span class="list-tools-label">Urutkan</span>
+            <div class="sort-pills" role="group" aria-label="Pilihan urutan">
+                <button type="button" class="sort-pill active" data-order="updated" onclick="loadOngoing(1, 'updated')">🔄 Terupdate</button>
+                <button type="button" class="sort-pill" data-order="title" onclick="loadOngoing(1, 'title')">🔤 Judul A-Z</button>
+            </div>
+            <form class="toolbar-search" action="/v3/search" method="get" role="search">
+                <input type="search" name="q" class="toolbar-search-input" placeholder="Cari judul..." autocomplete="off" aria-label="Cari anime">
+                <button type="submit" class="search-cta">Cari</button>
+            </form>
+        </div>
+
+        <div id="loadingIndicator" class="loading" style="display: block;" role="status">
+            <span class="loading-text">⏳ Memuat anime sedang tayang…</span>
+        </div>
+
+        <div id="errorMessage" class="error" style="display: none;" aria-live="assertive"></div>
+
+        <div id="animeGrid" class="anime-grid" style="display: none;"></div>
+
+        <nav id="pagination" class="pagination" aria-label="Halaman" style="display: none;"></nav>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentOrder = 'updated';
+        let paginationData = null;
+
+        function updateActiveButton(orderBy) {
+            document.querySelectorAll('.sort-pill').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.order === (orderBy || 'updated'));
+            });
+        }
+
+        async function loadOngoing(page = 1, orderBy = 'updated') {
+            const loadingEl = document.getElementById('loadingIndicator');
+            try {
+                currentPage = page;
+                currentOrder = orderBy;
+
+                updateActiveButton(orderBy);
+
+                loadingEl.classList.remove('error-state');
+                loadingEl.innerHTML = '<span class="loading-text">⏳ Memuat anime sedang tayang…</span>';
+                loadingEl.style.display = 'block';
+                document.getElementById('errorMessage').style.display = 'none';
+                document.getElementById('animeGrid').style.display = 'none';
+                document.getElementById('pagination').style.display = 'none';
+
+                const response = await fetch(`/api/v3/kuramanime/ongoing?page=${page}&order_by=${orderBy}`);
+                const data = await response.json();
+
+                if (data.status === 'success') {
+                    paginationData = data.data.pagination;
+
+                    renderAnimeGrid(data.data.anime_list);
+                    renderPagination();
+                    updateHeaderStats(data.data.total_anime, data.data.anime_list.length);
+
+                    loadingEl.style.display = 'none';
+                    document.getElementById('animeGrid').style.display = 'grid';
+                    if (paginationData && (paginationData.total_pages > 1 || paginationData.has_next || paginationData.has_previous)) {
+                        document.getElementById('pagination').style.display = 'flex';
+                    }
+                } else {
+                    throw new Error(data.message || 'Failed to load data');
+                }
+            } catch (error) {
+                console.error('Error loading ongoing anime:', error);
+                loadingEl.classList.add('error-state');
+                loadingEl.innerHTML = '<span class="loading-text">❌ Gagal memuat anime. Silakan refresh halaman.</span>';
+                loadingEl.style.display = 'block';
+            }
+        }
+
+        function renderAnimeGrid(animeList) {
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = '';
+
+            if (!animeList || animeList.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div style="font-size:2.5rem;margin-bottom:12px;opacity:.55">📭</div>Tidak ada anime sedang tayang untuk urutan ini</div>';
+                return;
+            }
+
+            animeList.forEach(anime => {
+                const card = document.createElement('div');
+                card.className = 'anime-card';
+                card.onclick = () => window.location.href = `/v3/detail?animeId=${anime.anime_id}&slug=${anime.slug}`;
+
+                // Build tags
+                let tagsHTML = '';
+                if (anime.type) {
+                    tagsHTML += `<span class="anime-tag">${anime.type}</span>`;
+                }
+                if (anime.status) {
+                    tagsHTML += `<span class="anime-tag">${anime.status}</span>`;
+                }
+
+                // Trending badge for ongoing anime
+                const trendingBadge = anime.is_trending ? '<div class="trending-badge">🔥 Trending</div>' : '';
+
+                card.innerHTML = `
+                    <div class="anime-poster-wrap">
+                        <img src="${anime.poster}" alt="${anime.title}" class="anime-poster" loading="lazy" onerror="this.src='https://via.placeholder.com/180x260?text=No+Image'">
+                        ${trendingBadge}
+                        ${anime.episode ? `<div class="episode-badge">${anime.episode}</div>` : ''}
+                    </div>
+                    <div class="anime-info">
+                        <div class="anime-title">${anime.title}</div>
+                        <div class="anime-tags">
+                            ${tagsHTML}
+                        </div>
+                    </div>
+                `;
+
+                grid.appendChild(card);
+            });
+        }
+
+        function renderPagination() {
+            const pagination = document.getElementById('pagination');
+            pagination.innerHTML = '';
+
+            const prevBtn = document.createElement('button');
+            prevBtn.type = 'button';
+            prevBtn.textContent = '‹ Sebelumnya';
+            prevBtn.disabled = !paginationData.has_previous;
+            prevBtn.onclick = () => loadOngoing(currentPage - 1, currentOrder);
+
+            const pageInfo = document.createElement('span');
+            pageInfo.textContent = `Halaman ${paginationData.current_page} / ${paginationData.total_pages}`;
+
+            const nextBtn = document.createElement('button');
+            nextBtn.type = 'button';
+            nextBtn.textContent = 'Berikutnya ›';
+            nextBtn.disabled = !paginationData.has_next;
+            nextBtn.onclick = () => loadOngoing(currentPage + 1, currentOrder);
+
+            pagination.appendChild(prevBtn);
+            pagination.appendChild(pageInfo);
+            pagination.appendChild(nextBtn);
+        }
+
+        function updateHeaderStats(totalAnime, pageCount) {
+            const stats = document.getElementById('headerStats');
+            const pagePart = paginationData
+                ? ` · Halaman <strong>${paginationData.current_page}</strong> dari <strong>${paginationData.total_pages}</strong>`
+                : '';
+            stats.innerHTML = `<strong>${totalAnime || 0}</strong> anime sedang tayang · menampilkan <strong>${pageCount || 0}</strong> judul${pagePart}`;
+        }
+
+        // Load initial data
+        loadOngoing(1, 'updated');
+    </script>
+</body>
+</html>
