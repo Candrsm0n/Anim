@@ -36,35 +36,35 @@ jobs:
             -e "ssh -i ~/.ssh/deploy_key" \
             ./ "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}:/var/www/Anim/"
 
-      - name: Install and restart app on VPS
+      - name: Restart app on VPS
         run: |
-          ssh -i ~/.ssh/deploy_key "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" << 'EOF'
-            set -e
+          ssh -i ~/.ssh/deploy_key "${{ secrets.VPS_USER }}@${{ secrets.VPS_HOST }}" "bash -s" << 'REMOTE'
+          set -e
 
-            cd /var/www/Anim
+          cd /var/www/Anim
 
-            mkdir -p cache/images cache/hls
+          mkdir -p cache/images cache/hls
 
-            CHROME_PATH="$(which google-chrome-stable || true)"
+          CHROME_PATH="$(command -v google-chrome-stable || true)"
 
-            cat > .env << ENVEOF
-PORT=5000
-NODE_ENV=production
-PUPPETEER_EXECUTABLE_PATH=${CHROME_PATH}
-KURAMANIME_CHROMIUM_PATH=${CHROME_PATH}
-ENVEOF
+          printf '%s\n' \
+            "PORT=5000" \
+            "NODE_ENV=production" \
+            "PUPPETEER_EXECUTABLE_PATH=${CHROME_PATH}" \
+            "KURAMANIME_CHROMIUM_PATH=${CHROME_PATH}" \
+            > .env
 
-            PUPPETEER_SKIP_DOWNLOAD=true npm install --no-audit --no-fund
+          PUPPETEER_SKIP_DOWNLOAD=true npm install --no-audit --no-fund
 
-            npm install -g pm2
+          npm install -g pm2
 
-            pm2 delete anim 2>/dev/null || true
-            pm2 delete animme 2>/dev/null || true
-            pm2 delete anime-chan 2>/dev/null || true
+          pm2 delete anim 2>/dev/null || true
+          pm2 delete animme 2>/dev/null || true
+          pm2 delete anime-chan 2>/dev/null || true
 
-            pm2 start server/server.js --name anim --cwd /var/www/Anim --update-env
+          pm2 start server/server.js --name anim --cwd /var/www/Anim --update-env
 
-            pm2 save
+          pm2 save
 
-            echo "DEPLOY SELESAI"
-          EOF
+          echo "DEPLOY SELESAI"
+          REMOTE
