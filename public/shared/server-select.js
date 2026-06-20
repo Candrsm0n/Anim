@@ -1,15 +1,15 @@
 (() => {
     const SERVERS = [
-        ['v1', 'Otakudesu', '/v1/home'],
-        ['v2', 'Samehadaku', '/v2/home'],
-        ['v3', 'Kuramanime', '/v3/home'],
-        ['v4', 'Anichin', '/v4/home'],
-        ['v5', 'Anoboy', '/v5/home'],
-        ['v6', 'AnimeIndo', '/v6/home'],
-        ['v7', 'Nekopoi', '/v7/home'],
-        ['v8', 'Kusonime', '/v8/home'],
-        ['v9', 'Auratail', '/v9/home'],
-        ['v10', 'Vidku', '/v10/']
+        ['v1', 'Otakudesuu', '/v1/home'],
+        ['v2', 'Samehadakuu', '/v2/home'],
+        ['v3', 'Kuramanimee', '/v3/home'],
+        ['v4', 'Anichinn', '/v4/home'],
+        ['v5', 'Anoboyy', '/v5/home'],
+        ['v6', 'AnimeIndoo', '/v6/home'],
+        ['v7', 'Nekopoii', '/v7/home'],
+        ['v8', 'Kusonimee', '/v8/home'],
+        ['v9', 'Aurataill', '/v9/home'],
+        ['v10', 'Vidkuu', '/v10/']
     ];
 
     const SERVER_HOME = Object.fromEntries(SERVERS.map(([id, , home]) => [id, home]));
