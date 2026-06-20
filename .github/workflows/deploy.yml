@@ -62,8 +62,7 @@ jobs:
           pm2 delete animme 2>/dev/null || true
           pm2 delete anime-chan 2>/dev/null || true
 
-          pm2 start server/server.js --name anim --cwd /var/www/Anim --update-env
-
+          pm2 start server/static-server.js --name anim --cwd /var/www/Anim --update-env
           pm2 save
 
           echo "DEPLOY SELESAI"
